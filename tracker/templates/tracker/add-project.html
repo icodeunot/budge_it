@@ -1,0 +1,60 @@
+{% extends 'tracker/base.html' %}
+{% block title %}
+Add Month
+{% endblock title %}
+{% block content %}
+<br>
+  <div class="container">
+   <div class="row justify-content-center">
+     <div class="col-md-8 col-lg-6">
+       <h1 class="text-center mb-5">Add Monthly Budget</h1>
+       <form action="" method="POST" class="p-4 rounded-3 bg-gradient">
+         {% csrf_token %}
+         {% for field in form %}
+           <div class="mb-3">
+               <label for="{{ field.id_for_label }}" class="form-label h6">{{ field.label }}</label>
+               <input type="text" class="form-control form-control-lg" id="{{ field.id_for_label }}" name="{{ field.name }}" >
+           </div>
+         {% endfor %}
+         <div class="mb-3">
+           <br>
+           <label for="categoryInput" class="form-label h6"> Categories (hit enter after every category)</label>
+           <div class="input-group">
+             <input type="text" class="form-control form-control-lg" id="categoryInput" placeholder="Enter category" aria-describedby="addCategoryBtn">
+             <button type="button" class="btn btn-primary btn-lg" id="addCategoryBtn">Add</button>
+           </div>
+         </div>
+         <input type="hidden" name="categoriesString" id="categoriesString">
+         <div class="d-flex flex-wrap mb-3" id="categoriesContainer">
+         </div>
+         <button type="submit" class="btn btn-primary btn-lg w-100">Start Project</button>
+       </form>
+     </div>
+   </div>
+ </div>
+  <script>
+   const categoryInput = document.getElementById('categoryInput');
+   const categoriesContainer = document.getElementById('categoriesContainer');
+   const categoriesString = document.getElementById('categoriesString');
+    const addCategory = () => {
+     const category = categoryInput.value.trim();
+     if (!category) return;
+     const categoryBadge = `<h4><span class="badge bg-success me-2">${category}<span class="ms-2" style="cursor: pointer;" onclick="removeCategory(this)"><i class="fa-solid fa-xmark"></i></span></span></h4>`;
+     categoriesContainer.insertAdjacentHTML('beforeend', categoryBadge);
+     categoriesString.value = [...categoriesContainer.children].map(c => c.innerText.trim()).join(',');
+     categoryInput.value = '';
+   }
+    const removeCategory = (category) => {
+     category.parentElement.remove();
+     categoriesString.value = [...categoriesContainer.children].map(c => c.innerText.trim()).join(',');
+   }
+    categoryInput.addEventListener('keydown', (event) => {
+     if (event.key === 'Enter') {
+       event.preventDefault();
+       addCategory();
+     }
+   });
+    const addCategoryBtn = document.getElementById('addCategoryBtn');
+   addCategoryBtn.addEventListener('click', addCategory);
+ </script>
+ {% endblock content %}

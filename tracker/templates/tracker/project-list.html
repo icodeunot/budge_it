@@ -1,0 +1,154 @@
+{% extends 'tracker/base.html' %}
+
+{% block title %}
+Budge It!
+{% endblock title %}
+
+{% block content %}
+<div class="container-fluid">
+   <h1 class="text-center mb-4 mt-4">Negative Spending {{year}}</h1>
+   
+   <div class="float-list">
+      [] Passports - $  600 <br>
+      [] Hotel     - $ 1200 <br>
+      [] Tickets   - $  800 <br>
+      <button class="new-goal">add new item</button>
+      <!-- <button class="close-btn">x</button> -->
+   </div>
+
+   <div class="row" style="gap: 3px;">
+      {% for month, days in month_days %}
+         <div class="col" style="display: flex; flex-direction: column; gap: 10px; flex: 1;">
+            <div class="text-center month-header">{{ month }}</div>
+            <div class="days-container">
+               {% for day, weekday in days %}
+                  <div class="border p-2 day-cell">
+                     {{ day }} ({{ weekday }})
+                  </div>
+               {% endfor %}
+            </div>
+         </div>
+      {% endfor %}
+   </div>
+</div>
+
+<style>
+.container-fluid {
+   padding: 20px;
+   background-color: #f8f9fa;
+
+}
+.month-header {
+   position: sticky;
+   top: 0;
+   z-index: 100;
+   background-color: #28a745; /* Green background */
+   color: white;              /* White text */
+   font-weight: bold;         /* Bold text */
+   border-radius: 5px;        /* Rounded corners */
+   padding: 10px 0;           /* Padding for spacing */
+   display: block;            /* Ensure full column width */
+   text-align: center;        /* Align text to center */
+   width: 100%;               /* Match column width */
+}
+.border {
+   border: 1px solid #4C4E52;
+}
+.row {
+   margin-bottom: 5px;
+   display: flex;            /* Ensure columns line up */
+   gap: 5px;                /* Consistent spacing */
+}
+.col {
+   padding: 5px;
+   flex: 1;                  /* Allow columns to share available space evenly */
+   /* min-width: 100px;          /* Adjust minimum column width as needed */
+}
+.day-cell:hover {
+   background-color: #28a745; /* Light green background on hover */
+}
+.day-cell {
+   outline: 2px solid #4C4E52; /* Constant blue outline around day cells */
+   border-radius: 3px;         /* Slightly rounded corners for day cells */
+}
+.days-container {
+   display: flex;
+   flex-direction: column;
+   gap: 5px;                 /* Spacing between day cells */
+}
+.float-list {
+   position: fixed;              
+   top: 20%;                    /* Set an initial position */
+   left: 70%;                   /* Adjust as needed */
+   right: auto;                 /* Prevent conflicts */
+   width: 200px;                
+   height: 200px;   
+   background-color: #23e06f;
+   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+   border: 1px solid #ccc;        
+   padding: 10px;                 
+   font-family: "Arial", sans-serif;
+   font-size: 14px;               
+   color: #333;                   
+   border-radius: 5px;            
+   z-index: 1000;                 
+   cursor: grab;                 
+}
+.close-btn {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background: none;
+    border: none;
+    color: #333;
+    font-size: 16px;
+    cursor: pointer;
+}
+.new-goal {
+    position: absolute;
+    bottom: 5px;
+    right: 5px;
+    background: rgba(255, 255, 255, 0.61);
+    border-color: rgba(255, 255, 255, 0.61);
+    font-family: Arial, Helvetica, sans-serif;
+    border-radius: 5px;
+    color: #333;
+    font-size: 16px;
+    cursor: pointer;
+}
+</style>
+<script>
+   document.addEventListener('DOMContentLoaded', function () {
+       console.log('Script is running');
+       const postIt = document.querySelector('.float-list');
+       const closeBtn = document.querySelector('.close-btn');
+   
+       let isDragging = false, offsetX = 0, offsetY = 0;
+   
+       postIt.addEventListener('mousedown', function (e) {
+           console.log('Mouse down detected');
+           isDragging = true;
+           offsetX = e.clientX - postIt.getBoundingClientRect().left;
+           offsetY = e.clientY - postIt.getBoundingClientRect().top;
+           postIt.style.cursor = 'grabbing';
+       });
+   
+       document.addEventListener('mousemove', function (e) {
+           if (isDragging) {
+               postIt.style.top = `${e.clientY - offsetY}px`;
+               postIt.style.left = `${e.clientX - offsetX}px`;
+           }
+       });
+   
+       document.addEventListener('mouseup', function () {
+           isDragging = false;
+           postIt.style.cursor = 'grab';
+       });
+   
+       closeBtn.addEventListener('click', function (e) {
+           e.stopPropagation();
+           postIt.style.display = 'none';
+       });
+   });
+   </script>
+{% endblock content %}
